@@ -1,0 +1,24 @@
+services:
+
+    postgres:
+      image: bitnami/postgresql:latest
+      ports:
+        - "5432:5432"
+      environment:
+        POSTGRESQL_USER: helton
+        POSTGRESQL_PASSWORD: admin
+        POSTGRESQL_DATABASE: fastapi
+
+      volumes:
+        - fastapi_pg_data:/bitnami/postgresql
+
+    pgadmin:
+      image: dpage/pgadmin4
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin@gmail.com
+        PGADMIN_DEFAULT_PASSWORD: admin
+      ports:
+        - "80:80"
+
+volumes:
+  fastapi_pg_data:
