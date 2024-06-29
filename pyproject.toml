@@ -21,7 +21,7 @@ addopts = '-p no:warnings'
 [tool.taskipy.tasks]
 lint = 'ruff check . && ruff check . --diff'
 format = 'ruff check . --fix && ruff format .'
-run = 'fastapi dev main.py'
+run = 'fastapi dev app.py'
 pre_test = 'task lint'
 test = 'pytest -s -x --cov=App -vv'
 post_test = 'coverage html'

@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from App.database import Base, get_session
-from App.main import app
+from App.app import app
 from App.models import User
 from App.security import get_password_hash
 

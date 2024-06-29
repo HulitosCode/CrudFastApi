@@ -12,7 +12,7 @@ def test_root_deve_retornar_ok_e_ola_mundo(client):
 
 def test_get_token(client, usertest):
     response = client.post(
-        '/auth/token',
+        '/token',
         data={'username': usertest.email, 'password': usertest.clean_password},
     )
     token = response.json()
@@ -24,7 +24,7 @@ def test_get_token(client, usertest):
 
 def test_create_user(client):
     response = client.post(
-        '/auth/users/',
+        '/users/',
         json={
             'username': 'elton',
             'email': 'elton@gmail.com',
@@ -39,7 +39,7 @@ def test_create_user(client):
 
 
 def test_read_users(client):
-    response = client.get('/auth/users/')
+    response = client.get('/users')
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {'users': []}
 
@@ -52,13 +52,13 @@ def test_read_user_not_found(client):
 
 def test_read_users_with_users(client, user):
     user_schema = UserPublic.model_validate(user).model_dump()
-    response = client.get('/auth/users/')
+    response = client.get('/users/')
     assert response.json() == {'users': [user_schema]}
 
 
 def test_update_user(client, usertest, token):
     response = client.put(
-        f'/auth/users/{usertest.id}',
+        f'/users/{usertest.id}',
         headers={'Authorization': f'Bearer {token}'},
         json={
             'username': 'Tinna',
@@ -76,7 +76,7 @@ def test_update_user(client, usertest, token):
 
 def test_update_user_not_found(client, usertest):
     response = client.put(
-        f'/auth/users/{usertest.id}',
+        f'/users/{usertest.id}',
         json={
             'username': 'Tinna',
             'email': 'tinna@gmail.com',
@@ -89,7 +89,7 @@ def test_update_user_not_found(client, usertest):
 
 def test_delete_user(client, user, token):
     response = client.delete(
-        f'/auth/users/{user.id}',
+        f'/users/{user.id}',
         headers={'Authorization': f'Bearer {token}'},
     )
 
