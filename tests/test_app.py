@@ -10,6 +10,18 @@ def test_root_deve_retornar_ok_e_ola_mundo(client):
     assert response.json() == {'message': 'Olá Mundo!'}
 
 
+def test_get_token(client, usertest):
+    response = client.post(
+        '/auth/token',
+        data={'username': usertest.email, 'password': usertest.clean_password},
+    )
+    token = response.json()
+
+    assert response.status_code == HTTPStatus.OK
+    assert 'access_token' in token
+    assert 'token_type' in token
+
+
 def test_create_user(client):
     response = client.post(
         '/auth/users/',
@@ -44,37 +56,42 @@ def test_read_users_with_users(client, user):
     assert response.json() == {'users': [user_schema]}
 
 
-def test_update_user(client, user):
+def test_update_user(client, usertest, token):
     response = client.put(
-        '/auth/users/1',
+        f'/auth/users/{usertest.id}',
+        headers={'Authorization': f'Bearer {token}'},
         json={
-            'username': 'Hulitos',
-            'email': 'hulitos@gmail.com',
-            'password': 'Hulitos123',
+            'username': 'Tinna',
+            'email': 'tinna@gmail.com',
+            'password': 'Tinna123',
         },
     )
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
-        'username': 'Hulitos',
-        'email': 'hulitos@gmail.com',
+        'username': 'Tinna',
+        'email': 'tinna@gmail.com',
+        # 'id': usertest.id,
     }
 
 
-def test_update_user_not_found(client):
+def test_update_user_not_found(client, usertest):
     response = client.put(
-        '/auth/users/10',
+        f'/auth/users/{usertest.id}',
         json={
-            'username': 'Hulitos',
-            'email': 'hulitos@gmail.com',
-            'password': 'Hulitos123',
+            'username': 'Tinna',
+            'email': 'tinna@gmail.com',
+            'password': 'Tinna123',
         },
     )
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json() == {'detail': 'User not found'}
 
 
-def test_delete_user(client, user):
-    response = client.delete('/auth/users/1')
+def test_delete_user(client, user, token):
+    response = client.delete(
+        f'/auth/users/{user.id}',
+        headers={'Authorization': f'Bearer {token}'},
+    )
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {'message': 'User deleted!'}

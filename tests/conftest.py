@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from App.database import Base, get_session
 from App.main import app
 from App.models import User
+from App.security import get_password_hash
 
 
 @pytest.fixture()
@@ -31,13 +32,39 @@ def session():
         yield session
 
     # Base.metadata.drop_all(bind=engine)
+    # Base.metadata.create_all(bind=engine)
 
 
 @pytest.fixture()
 def user(session):
-    user = User(username='Tina', email='tina@gmail.com', password='Tinna123')
+    user = User(username='Tinna', email='tinna@gmail.com', password='Tinna123')
     session.add(user)
     session.commit()
     session.refresh(user)
 
     return user
+
+
+@pytest.fixture()
+def usertest(session):
+    user = User(
+        username='Tina',
+        email='tina@gmail.com',
+        password=get_password_hash('Tinna123'),
+    )
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+
+    user.clean_password = 'testtest'
+
+    return user
+
+
+@pytest.fixture()
+def token(client, usertest):
+    response = client.post(
+        '/auth/token',
+        data={'username': usertest.email, 'password': usertest.clean_password},
+    )
+    return response.json()['access_token']
