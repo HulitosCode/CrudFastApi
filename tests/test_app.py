@@ -4,7 +4,7 @@ from App.schemas import UserPublic
 
 
 def test_root_deve_retornar_ok_e_ola_mundo(client):
-    response = client.get('/auth/')
+    response = client.get('/')
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {'message': 'Olá Mundo!'}
@@ -12,7 +12,7 @@ def test_root_deve_retornar_ok_e_ola_mundo(client):
 
 def test_get_token(client, usertest):
     response = client.post(
-        '/token',
+        '/auth/token',
         data={'username': usertest.email, 'password': usertest.clean_password},
     )
     token = response.json()
@@ -26,15 +26,15 @@ def test_create_user(client):
     response = client.post(
         '/users/',
         json={
-            'username': 'elton',
-            'email': 'elton@gmail.com',
-            'password': '123',
+            'username': 'Tinna',
+            'email': 'tinna@gmail.com',
+            'password': 'Tinna123',
         },
     )
     assert response.status_code == HTTPStatus.CREATED
     assert response.json() == {
-        'username': 'elton',
-        'email': 'elton@gmail.com',
+        'username': 'Tinna',
+        'email': 'tinna@gmail.com',
     }
 
 

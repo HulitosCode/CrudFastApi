@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from typing import Annotated
 
 from http import HTTPStatus
 from fastapi import Depends, APIRouter, HTTPException
@@ -63,7 +62,8 @@ def read_user(user_id: int, session: Session = Depends(get_session)):
     db_user = session.scalar(select(User).where(User.id == user_id))
     if not db_user:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail='User not found'
+            status_code=HTTPStatus.NOT_FOUND, 
+            detail='User not found'
         )
     
     return db_user

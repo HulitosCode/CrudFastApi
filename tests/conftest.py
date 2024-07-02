@@ -3,8 +3,8 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from App.database import Base, get_session
 from App.app import app
+from App.database import Base, get_session
 from App.models import User
 from App.security import get_password_hash
 
@@ -47,16 +47,17 @@ def user(session):
 
 @pytest.fixture()
 def usertest(session):
+    password = 'Tina123'
     user = User(
         username='Tina',
         email='tina@gmail.com',
-        password=get_password_hash('Tinna123'),
+        password=get_password_hash(password),
     )
     session.add(user)
     session.commit()
     session.refresh(user)
 
-    user.clean_password = 'testtest'
+    user.clean_password = 'Tina123'
 
     return user
 

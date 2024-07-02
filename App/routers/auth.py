@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from App.database import get_session
 from App.schemas import Token
 from App.models import User
-from App.security import (create_access_token, verify_password)
+from App.security import (create_access_token, get_current_user, verify_password)
 
 
 router = APIRouter(prefix='/auth', tags=['auth'])
@@ -37,3 +37,12 @@ def login_for_access_token(
     access_token = create_access_token(data={'sub': user.email})
 
     return {'access_token': access_token, 'token_type': 'bearer'}
+
+
+@router.post('/refresh_token', response_model=Token)
+def refresh_access_token(
+    user: User = Depends(get_current_user),
+):
+    new_access_token = create_access_token(data={'sub':user.email})
+
+    return {'access_token': new_access_token, 'token_type': 'bearer'}
