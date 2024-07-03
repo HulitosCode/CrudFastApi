@@ -10,7 +10,6 @@ from App.models import User, Todo
 
 Base.metadata.create_all(bind=engine)
 
-print("Tabelas criadas com sucesso!")
 
 app = FastAPI()
 

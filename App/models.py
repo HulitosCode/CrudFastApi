@@ -26,8 +26,8 @@ class Todo(Base):
     __tablename__ = 'todos'
 
     id = Column(Integer, primary_key=True)
-    title = Column(String(100), nullable=True)
-    description = Column(String(150), nullable=True)
+    title = Column(String(255), nullable=True)
+    description = Column(String(255), nullable=True)
     state = Column(SqlENum(TodoState), nullable=False)
 
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
