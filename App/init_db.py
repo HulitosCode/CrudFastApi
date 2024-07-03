@@ -1,5 +1,7 @@
-from App.database import engine, Base
-from App.models import User
+# from database import engine, Base
+# from models import User, Todo
 
 
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
+
+# print("Tabelas criadas com sucesso!")

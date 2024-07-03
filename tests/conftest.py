@@ -1,3 +1,4 @@
+import factory
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -7,6 +8,15 @@ from App.app import app
 from App.database import Base, get_session
 from App.models import User
 from App.security import get_password_hash
+
+
+class UserFactory(factory.Factory):
+    class Meta:
+        model = User
+
+    username = factory.Sequence(lambda n: f'test{n}')
+    email = factory.LazyAttribute(lambda obj: f'{obj.username}@test.com')
+    password = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')
 
 
 @pytest.fixture()
@@ -31,41 +41,42 @@ def session():
     with Session(engine) as session:
         yield session
 
-    # Base.metadata.drop_all(bind=engine)
-    # Base.metadata.create_all(bind=engine)
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
 
 
 @pytest.fixture()
 def user(session):
-    user = User(username='Tinna', email='tinna@gmail.com', password='Tinna123')
+    password = 'testtest'
+    user = UserFactory(password=get_password_hash(password))
+
     session.add(user)
     session.commit()
     session.refresh(user)
+
+    user.clean_password = 'testtest'
 
     return user
 
 
 @pytest.fixture()
-def usertest(session):
-    password = 'Tina123'
-    user = User(
-        username='Tina',
-        email='tina@gmail.com',
-        password=get_password_hash(password),
-    )
+def other_user(session):
+    password = 'testtest'
+    user = UserFactory(password=get_password_hash(password))
+
     session.add(user)
     session.commit()
     session.refresh(user)
 
-    user.clean_password = 'Tina123'
+    user.clean_password = 'testtest'
 
     return user
 
 
 @pytest.fixture()
-def token(client, usertest):
+def token(client, user):
     response = client.post(
         '/auth/token',
-        data={'username': usertest.email, 'password': usertest.clean_password},
+        data={'username': user.email, 'password': user.clean_password},
     )
     return response.json()['access_token']

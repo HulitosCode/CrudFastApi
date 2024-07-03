@@ -31,7 +31,7 @@ def login_for_access_token(
     if not verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
-            detail='Incorrect email ou password'
+            detail='Incorrect email or password'
         )
     
     access_token = create_access_token(data={'sub': user.email})
