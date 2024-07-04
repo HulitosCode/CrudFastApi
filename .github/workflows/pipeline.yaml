@@ -7,21 +7,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out repository
+    - name: Copia os arquivos do repositório
       uses: actions/checkout@v2
 
-    - name: Set up Python
+    - name: Instalar o python
       uses: actions/setup-python@v2
       with:
         python-version: '3.12'  # ajuste a versão do Python conforme necessário
 
-    - name: Set up environment and install dependencies
+    - name: Instalar variaveis de ambiente e dependências
       run: |
         python3 -m venv venv
         source venv/bin/activate
         pip install --upgrade pip
 
-    - name: Run tests
+    - name: Executar testes
       run: |
         source venv/bin/activate
         task test
