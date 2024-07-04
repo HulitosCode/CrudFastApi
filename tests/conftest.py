@@ -3,6 +3,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
+from testcontainers.postgres import PostgresContainer
 
 from App.app import app
 from App.database import Base, get_session
@@ -32,17 +33,27 @@ def client(session):
 
 
 @pytest.fixture()
-def session():
-    engine = create_engine(
-        'postgresql+psycopg2://helton:admin@localhost:5432/fastapi'
-    )
+def session(engine):
+    # Cria todas as tabelas definidas no metadata
     Base.metadata.create_all(bind=engine)
 
     with Session(engine) as session:
         yield session
+        # Desfaz todas as transações pendentes
+        session.rollback()
 
+    # Remove todas as tabelas após o teste
     Base.metadata.drop_all(bind=engine)
+    # Opcional: Recria as tabelas, se necessário
     Base.metadata.create_all(bind=engine)
+
+
+# Resolvendo problema de lentidao na execussao dos testes
+@pytest.fixture(scope='session')
+def engine():
+    with PostgresContainer('postgres:16', driver='psycopg2') as postgres:
+        _engine = create_engine(postgres.get_connection_url())
+        yield _engine
 
 
 @pytest.fixture()

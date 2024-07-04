@@ -20,5 +20,16 @@ services:
       ports:
         - "80:80"
 
+    crudfastapi:
+      image: crudfastapi
+      entrypoint: ./entrypoint.sh
+      build: .
+      ports:
+        - "8000:8000"
+      depends_on:
+        - postgres
+      environment:
+        DATABASE_URL: postgresql+psycopg://helton:admin@postgres:5432/fastapi
+
 volumes:
   fastapi_pg_data:
