@@ -30,5 +30,5 @@ jobs:
     - name: Executar testes
       run: |
         source venv/bin/activate
-        cd test
+        cd tests
         task test
